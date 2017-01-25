@@ -1,18 +1,23 @@
-function [ labelsOut ] = kNN(X, k, Xt, Lt)
-%KNN Your implementation of the kNN algorithm
-%   Inputs:
-%               X  - Features to be classified
-%               k  - Number of neighbors
-%               Xt - Training features
-%               LT - Correct labels of each feature vector [1 2 ...]'
-%
-%   Output:
-%               LabelsOut = Vector with the classified labels
+function [ labelsOut ] = kNN(test, k, train, train_classes)
 
-labelsOut  = zeros(size(X,2),1);
-classes = unique(Lt);
-numClasses = length(classes);
+preds = [];
 
+dist_matrix = pdist2(test',train');
+
+for row = 1:length(test)
+    
+    current_dist = dist_matrix(row,:);
+    
+    [throwaway, SortIndex] = sort(current_dist);
+    Ysorted = train_classes(SortIndex);
+    
+    k_nearest = Ysorted(1:k);
+    prediction = round(sum(k_nearest)/length(k_nearest));
+    preds(row) = prediction;
+    
+end
+
+labelsOut  = preds';
 
 end
 
