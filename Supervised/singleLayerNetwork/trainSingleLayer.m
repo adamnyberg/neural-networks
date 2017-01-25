@@ -28,7 +28,9 @@ testError(1) = sum(sum((Ytest - Dtest).^2))/Ntest;
 
 for n = 1:numIterations
     Y = Wout*Xt;
-    grad_w = 2/Nt*(Y- Dt)*Xt';
+    
+    grad_w =0;
+    
     Wout = Wout - learningRate*grad_w;
     trainingError(1+n) = sum(sum((Wout*Xt - Dt).^2))/Nt;
     testError(1+n) = sum(sum((Wout*Xtest - Dtest).^2))/Ntest;

@@ -9,9 +9,9 @@ function [ labelsOut ] = kNN(X, k, Xt, Lt)
 %   Output:
 %               LabelsOut = Vector with the classified labels
 
+labelsOut  = zeros(size(X,2),1);
 classes = unique(Lt);
 numClasses = length(classes);
-labelsOut  = zeros(size(X,2),1);
 
 
 end

@@ -19,6 +19,9 @@ GWLASTFEED = 0;
 
 GWWORLD = k;
 
+GWROBOT = imread('robot.jpg');
+GWGOAL = imread('goal.jpg');
+
 GWXSIZE = 10;
 GWYSIZE = 15;
 

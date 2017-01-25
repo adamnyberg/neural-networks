@@ -8,11 +8,10 @@ function [ Y, L ] = runSingleLayer(X, W)
 %               Y = Output for each feature, (matrix)
 %               L = The resulting label of each feature, (vector) 
 
-% Calculate net output
-Y = 1;
+Y = 0;
 
 % Calculate classified labels (Hint, use the max() function)
-
-L = 1;
+[~, L] = max(Y,[],1);
+L = L(:);
 end
 

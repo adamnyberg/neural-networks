@@ -7,14 +7,14 @@
 % 3 = dot cloud 3
 % 4 = OCR data
 
-dataSetNr = 4; % Change this to load new data 
+dataSetNr = 1; % Change this to load new data 
 
 [X, D, L] = loadDataSet( dataSetNr );
 
 %% Select a subset of the training features
 
 numBins = 2; % Number of Bins you want to devide your data into
-numSamplesPerLabelPerBin = 100; % Number of samples per label per bin, set to inf for max number (total number is numLabels*numSamplesPerBin)
+numSamplesPerLabelPerBin = inf; % Number of samples per label per bin, set to inf for max number (total number is numLabels*numSamplesPerBin)
 selectAtRandom = true; % true = select features at random, false = select the first features
 
 [ Xt, Dt, Lt ] = selectTrainingSamples(X, D, L, numSamplesPerLabelPerBin, numBins, selectAtRandom );
@@ -25,25 +25,27 @@ selectAtRandom = true; % true = select features at random, false = select the fi
 
 % The Training Data
 Xtraining = [];
+Xtraining  = [ones(1,size(Xt{1},2));Xt{1}]; % Remove this line
 
 % The Test Data
 Xtest = [];
+Xtest  = [ones(1,size(Xt{2},2));Xt{2}]; % Remove this line
 
 
 %% Train your single layer network
 % Note: You nned to modify trainSingleLayer() in order to train the network
 
-numHidden = 100; % Change this, Number of hidde neurons 
-numIterations = 40000; % Change this, Numner of iterations (Epochs)
-learningRate = 0.005; % Change this, Your learningrate
-
+numHidden = 7; % Change this, Number of hidde neurons 
+numIterations = 800; % Change this, Numner of iterations (Epochs)
+learningRate = 0.001; % Change this, Your learningrate
 W0 = 0; % Change this, Initiate your weight matrix W
 V0 = 0; % Change this, Initiate your weight matrix V
 
 %
+tic
 [W,V, trainingError, testError ] = trainMultiLayer(Xtraining,Dt{1},Xtest,Dt{2}, W0,V0,numIterations, learningRate );
-
-% Plot errors
+trainingTime = toc;
+%% Plot errors
 figure(1101)
 clf
 [mErr, mErrInd] = min(testError);
@@ -52,20 +54,25 @@ hold on
 plot(testError,'r','linewidth',1.5)
 plot(mErrInd,mErr,'bo','linewidth',1.5)
 hold off
-title('Training and Test Errors, Single Layer')
+title('Training and Test Errors, Multi-Layer')
 legend('Training Error','Test Error','Min Test Error')
 
 %% Calculate The Confusion Matrix and the Accuracy of the Evaluation Data
 % Note: you have to modify the calcConfusionMatrix() function yourselfs.
 
 [ Y, LMultiLayerTraining ] = runMultiLayer(Xtraining, W, V);
+tic
 [ Y, LMultiLayerTest ] = runMultiLayer(Xtest, W,V);
-
+classificationTime = toc/length(Xtest);
 % The confucionMatrix
-cM = calcConfusionMatrix( LMultiLayerTest, Lt{2})
+cM = calcConfusionMatrix( LMultiLayerTest, Lt{2});
 
 % The accuracy
-acc = calcAccuracy();
+acc = calcAccuracy(cM);
+
+display(['Time spent training: ' num2str(trainingTime) ' sec'])
+display(['Time spent calssifying 1 feature vector: ' num2str(classificationTime) ' sec'])
+display(['Accuracy: ' num2str(acc)])
 
 %% Plot classifications
 % Note: You do not need to change this code.

@@ -10,4 +10,4 @@ function out = sample(values,probs)
 p = cumsum(probs(:));
 p = p / p(end);
 out = find(p > rand);
-out = values(out(1));
+out = out(1);

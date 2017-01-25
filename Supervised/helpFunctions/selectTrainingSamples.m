@@ -11,7 +11,7 @@ Xt = {};
 Dt = {};
 Lt = {};
 if isinf(numSamples)
-    numSamples = floor(min(n)/numBins)
+    numSamples = floor(min(n)/numBins);
 end
 
 if selectAtRandom
