@@ -10,7 +10,7 @@ xi=linspace(min(Xt(2,:))-1,max(Xt(2,:))+1,nx);
 yi=linspace(min(Xt(3,:))-1,max(Xt(3,:))+1,ny);
 
 [XI,YI] = meshgrid(xi,yi);
-[ ~,I ] = runMultiLayer([ones(1,length(XI(:)));XI(:)';YI(:)'], W, V);
+[ ~, ~, I ] = runMultiLayer([ones(1,length(XI(:)));XI(:)';YI(:)'], W, V);
 
 
 %%

@@ -7,7 +7,7 @@
 % 3 = dot cloud 3
 % 4 = OCR data
 
-dataSetNr = 1; % Change this to load new data 
+dataSetNr = 3; % Change this to load new data 
 
 [X, D, L] = loadDataSet( dataSetNr );
 
@@ -24,26 +24,24 @@ selectAtRandom = true; % true = select features at random, false = select the fi
 %% Modify the X Matrices so that a bias is added
 
 % The Training Data
-Xtraining = [];
-Xtraining  = [ones(1,size(Xt{1},2));Xt{1}]; % Remove this line
+Xtraining = [ones(1,size(Xt{1},2));Xt{1}]; % Remove this line
 
 % The Test Data
-Xtest = [];
-Xtest  = [ones(1,size(Xt{2},2));Xt{2}]; % Remove this line
+Xtest = [ones(1,size(Xt{2},2));Xt{2}]; % Remove this line
 
 
 %% Train your single layer network
 % Note: You nned to modify trainSingleLayer() in order to train the network
 
-numHidden = 7; % Change this, Number of hidde neurons 
-numIterations = 800; % Change this, Numner of iterations (Epochs)
-learningRate = 0.001; % Change this, Your learningrate
-W0 = 0; % Change this, Initiate your weight matrix W
-V0 = 0; % Change this, Initiate your weight matrix V
+numHidden = 12; % Change this, Number of hidde neurons 
+numIterations = 80000; % Change this, Numner of iterations (Epochs)
+learningRate = 0.0002; % Change this, Your learningrate
+W0 = normrnd(0, 1, [numHidden size(X, 1)]); % Change this, Initiate your weight matrix W
+V0 = normrnd(0, 1, [size(D, 1) numHidden]); % Change this, Initiate your weight matrix V
 
 %
 tic
-[W,V, trainingError, testError ] = trainMultiLayer(Xtraining,Dt{1},Xtest,Dt{2}, W0,V0,numIterations, learningRate );
+[W, V, trainingError, testError ] = trainMultiLayer(Xtraining, Dt{1}, Xtest, Dt{2}, W0, V0, numIterations, learningRate);
 trainingTime = toc;
 %% Plot errors
 figure(1101)
@@ -60,9 +58,9 @@ legend('Training Error','Test Error','Min Test Error')
 %% Calculate The Confusion Matrix and the Accuracy of the Evaluation Data
 % Note: you have to modify the calcConfusionMatrix() function yourselfs.
 
-[ Y, LMultiLayerTraining ] = runMultiLayer(Xtraining, W, V);
+[ Y, ~, LMultiLayerTraining ] = runMultiLayer(Xtraining, W, V);
 tic
-[ Y, LMultiLayerTest ] = runMultiLayer(Xtest, W,V);
+[ Y, ~, LMultiLayerTest ] = runMultiLayer(Xtest, W,V);
 classificationTime = toc/length(Xtest);
 % The confucionMatrix
 cM = calcConfusionMatrix( LMultiLayerTest, Lt{2});

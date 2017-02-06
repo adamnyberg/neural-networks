@@ -12,7 +12,7 @@ dataSetNr = 3; % Change this to load new data
 [X, D, L] = loadDataSet( dataSetNr );
 
 % You can plot and study dataset 1 to 3 by running:
-% plotCase(X,D)
+plotCase(X,D)
 
 %% Select a subset of the training features
 
