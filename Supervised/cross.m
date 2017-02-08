@@ -40,4 +40,5 @@ for k = kRange
     end
 end
 
+
 %plotkNNResultDots(Xt{2},LkNN,k,Lt{2},Xt{1},Lt{1});

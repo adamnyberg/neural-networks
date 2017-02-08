@@ -1,5 +1,5 @@
 %% This script will help you test out your single layer neural network code
-
+rng(123);
 %% Select which data to use:
 
 % 1 = dot cloud 1
@@ -7,7 +7,7 @@
 % 3 = dot cloud 3
 % 4 = OCR data
 
-dataSetNr = 3; % Change this to load new data 
+dataSetNr = 4; % Change this to load new data 
 
 [X, D, L] = loadDataSet( dataSetNr );
 
@@ -23,9 +23,14 @@ selectAtRandom = true; % true = select features at random, false = select the fi
 % XBin1 = Xt{1};
 %% Modify the X Matrices so that a bias is added
 
+Xt{1}=Xt{1}-mean(Xt{1}(:));
+Xt{1}=Xt{1}/std(Xt{1}(:));
+
 % The Training Data
 Xtraining = [ones(1,size(Xt{1},2));Xt{1}]; % Remove this line
 
+Xt{2}=Xt{2}-mean(Xt{2}(:));
+Xt{2}=Xt{2}/std(Xt{2}(:));
 % The Test Data
 Xtest = [ones(1,size(Xt{2},2));Xt{2}]; % Remove this line
 
@@ -33,15 +38,16 @@ Xtest = [ones(1,size(Xt{2},2));Xt{2}]; % Remove this line
 %% Train your single layer network
 % Note: You nned to modify trainSingleLayer() in order to train the network
 
-numHidden = 12; % Change this, Number of hidde neurons 
-numIterations = 80000; % Change this, Numner of iterations (Epochs)
-learningRate = 0.0002; % Change this, Your learningrate
-W0 = normrnd(0, 1, [numHidden size(X, 1)]); % Change this, Initiate your weight matrix W
-V0 = normrnd(0, 1, [size(D, 1) numHidden]); % Change this, Initiate your weight matrix V
-
+numHidden = 130 % Change this, Number of hidde neurons 
+numIterations = 10000 % Change this, Numner of iterations (Epochs)
+learningRate = 0.021 % Change this, Your learningrate
+W = normrnd(0, 1, [numHidden size(X, 1)]); % Change this, Initiate your weight matrix W
+V = normrnd(0, 1, [size(D, 1) numHidden]); % Change this, Initiate your weight matrix V
+totalIterations = numIterations;
+%totalIterations = totalIterations + numIterations;
 %
 tic
-[W, V, trainingError, testError ] = trainMultiLayer(Xtraining, Dt{1}, Xtest, Dt{2}, W0, V0, numIterations, learningRate);
+[W, V, trainingError, testError ] = trainMultiLayer(Xtraining, Dt{1}, Xtest, Dt{2}, W, V, numIterations, learningRate);
 trainingTime = toc;
 %% Plot errors
 figure(1101)

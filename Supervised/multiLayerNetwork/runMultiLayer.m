@@ -13,7 +13,7 @@ S = 0; %Calculate the sumation of the weights and the input signals (hidden neur
 U = 0; %Calculate the activation function as a hyperbolic tangent
 
 U = tanh((W*X(2:end,:))+X(1,:)); %Calculate the sumation of the output neuron
-Y = tanh((V*U)+X(1,:));
+Y = ((V*U));
    
 
 % Calculate classified labels

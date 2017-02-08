@@ -9,7 +9,7 @@ rng(12345);
 % 3 = dot cloud 3
 % 4 = OCR data
 
-dataSetNr = 1; % Change this to load new data 
+dataSetNr = 4; % Change this to load new data 
 
 [X, D, L] = loadDataSet( dataSetNr );
 
