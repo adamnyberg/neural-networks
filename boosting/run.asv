@@ -8,7 +8,7 @@ nonfaces = double(nonfaces);
 nbrHaarFeatures = 100;
 nbrTrainExamples = 100;
 nbrTestExamples = 3000;
-nbrClassifiers = 200;
+nbrClassifiers = 100;
 epsLim = 0.0001;
 defaultAlpha = 5;
 
@@ -61,17 +61,27 @@ for t = 1:T
     
     for m = 1:M % ... test every feature ...
         for n = 1:N % ... with every possible threshold
-                       
+            
+            
+            currentThreshold =  xTrain(m,n);
+            xT = xTrain(m,:) < currentThreshold; %plocka ut alla thresholds under taur
+            mask = find(xT == 0); %hitta alla indexes för 0:or
+            xTd = zeros(size(xT));
+            xTd = double(xT);
+            xTd(mask) = xTd(mask) -1; %ändra alla 0:or till -1
+            I = xTd ~= yTrain; %1 vid felklassificeringar, 0 annars
+            eps(m,n) = sum(d.*I);
+            
             % Extract current threshold
-            currentThreshold = xTrain(m, n);
+            %currentThreshold = xTrain(m, n);
             
             % Check how well the current theshold performs
-            xThreshold = +(xTrain(m,:) < currentThreshold);
-            xThreshold(xThreshold == 0) = -1;
-            I = +(xThreshold ~= yTrain);
+            %xThreshold = +(xTrain(m,:) < currentThreshold);
+            %xThreshold(xThreshold == 0) = -1;
+            %I = +(xThreshold ~= yTrain);
             
             % Calculate the error
-            eps(m, n) = sum(d.*I);
+            %eps(m, n) = sum(d.*I);
             
             % If the error is too large, flip the polarity
             if eps(m, n) > 0.5
@@ -85,30 +95,54 @@ for t = 1:T
     [feature threshold] = find(eps == min(eps(:))); 
     feature = feature(1);
     threshold = threshold(1);
-    
-    tao = xTrain(feature, threshold);
     epsilon = eps(feature, threshold);
     polarity = pol(feature, threshold);
     
-    if eps > epsLim
+    if epsilon > epsLim
         alpha = 0.5*log((1-epsilon)/epsilon);
     else
         alpha = defaultAlpha;
     end
     
-    classifiers(:,t) = [epsilon; feature; tao; polarity; alpha]; % save best classifier    
+    classifiers(:,t) = [epsilon; feature; threshold; polarity; alpha]; % save best classifier
     
-    error = ((xTrain(feature,:) < tao) & (yTrain == 1)) | ((xTrain(feature,:) >= tao) & (yTrain == -1));
+    xThreshold = +(xTrain(feature,:) < threshold);
+    xThreshold(xThreshold == 0) = -1;
+    I = +(xThreshold ~= yTrain);
+    
+    I(I == 0) = -1;
+    if pol(m, n) < 0
+        misClass = ~I;
+    else
+        misClass = I;
+    end
+    
+    [bestFeature col] = find(epsilons == min(epsilons(:))); %Finds all the best 
+    bestFeature = bestFeature(1); col = col(1); % Chooses the first 
+    bestThreshold = xTrain(bestFeature, col);
+    eps_min = epsilons(bestFeature,col);
+    bestPolarity = polarities(bestFeature,col);
+
+    %CALCULATE ALPHA FOR WEIGHT UPDATE
+    if(eps > eps_min_threshold),
+        alpha = log((1-eps_min)/eps_min)/2;
+    else
+        alpha = alpha_max;
+    end
+    
+    
+    error = ((xTrain(feature,:) < threshold) & (yTrain == 1)) | ((xTrain(feature,:) >= threshold) & (yTrain == -1));
     if(polarity == -1)
         error = ~error;
     end
-    error = 2*error; 
-    misclass = error - 1;
+    error = 2*error; %error now consists of 2s and 0s    c
+    correct = 1-error;
     
-    d = d.*exp(-alpha .* misclass);
-    d = max(0.1/N, d); % Set max limit
+    
+    d = d.*exp(-alpha * correct);
+    %d = max(0.1/N, d); % Set max limit
 
-    d = min(10/N, d); % Set min limit
+    %d = min(10/N, d); % Set min limit
     d = d/sum(d); % Normalize
 end
 
