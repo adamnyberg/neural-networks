@@ -3,7 +3,6 @@
 load faces, load nonfaces
 faces = double(faces);
 nonfaces = double(nonfaces);
-%rng(12345)
 
 nbrHaarFeatures = 100;
 nbrTrainExamples = 100;
@@ -14,27 +13,7 @@ defaultAlpha = 5;
 
 tic
 
-figure(1)
-colormap gray
-for k=1:25
-    subplot(5,5,k), imagesc(faces(:,:,10*k)), axis image, axis off
-end
-figure(2)
-colormap gray
-for k=1:25
-    subplot(5,5,k), imagesc(nonfaces(:,:,10*k)), axis image, axis off
-end
-% Generate Haar feature masks
-
 haarFeatureMasks = GenerateHaarFeatureMasks(nbrHaarFeatures);
-figure(3)
-colormap gray
-for k = 1:25
-    subplot(5,5,k),imagesc(haarFeatureMasks(:,:,k),[-1 2])
-    axis image,axis off
-end
-
-
 
 % Create a training data set with a number of training data examples
 % from each class. Non-faces = class label y=-1, faces = class label y=1
@@ -114,7 +93,6 @@ end
 
 acc = accuracy(classifiers, xTest, yTest);
 
-
 trainingTime = toc;
 display(['Time spent training: ' num2str(trainingTime) ' sec'])
 display(['Accuracy: ' num2str(acc)])
@@ -134,8 +112,51 @@ plot(accs);
 xlabel('# of week classifiers', 'FontSize', 16);
 ylabel('Accuracy', 'FontSize', 16);
 
+
+%%
+h1 = 0;
+misclassed_faces = [];
+for i = 1:Ntest
     
-        
+    h1 = strong(classifiers, xTest(:,i));
+    correct_classed_faces(i) = h1 == yTest(1,i);
+    
+end
+            
+[num incorrect_indexes] = find(correct_classed_faces == 0);
+[num correct_indexes] = find(correct_classed_faces == 1);
+
+
+figure(1)
+colormap gray
+for k=1:25
+    subplot(5,5,k), imagesc(testImages(:,:,correct_indexes(k))), axis image, axis off
+end
+figure(2)
+colormap gray
+for k=1:25
+    subplot(5,5,k), imagesc(testImages(:,:,incorrect_indexes(k))), axis image, axis off
+end
+figure(3)
+colormap gray
+for k=1:25
+    subplot(5,5,k), imagesc(testImages(:,:,incorrect_indexes(k+550))), axis image, axis off
+end
+
+%figure(2)
+%colormap gray
+%for k=1:25
+%    subplot(5,5,k), imagesc(nonfaces(:,:,10*k)), axis image, axis off
+%end
+% Generate Haar feature masks
+
+
+%figure(3)
+%colormap gray
+%for k = 1:25
+%    subplot(5,5,k),imagesc(haarFeatureMasks(:,:,k),[-1 2])
+%    axis image,axis off
+%end
 
 
 
