@@ -1,8 +1,8 @@
-function [h] = strong(H, X, T)
+function [h] = strong(H, X)
 
     h = 0;
 
-    for i = 1:T
+    for i = 1:size(H,2)
         % Weak classifiers features
         %epsilon = H(1,i);
         feature = H(2,i);

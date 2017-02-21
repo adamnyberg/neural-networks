@@ -112,26 +112,28 @@ for t = 1:T
     d = d/sum(d); % Normalize
 end
 
-correct = 0;
-h1 = 0;
-
-for i = 1:Ntest
-    
-    h1 = strong(classifiers, xTest(:,i), T);
-    
-    if h1 == yTest(1,i)
-        correct = correct +1;   
-    end
-    
-end
-
-acc = correct/Ntest;
+acc = accuracy(classifiers, xTest, yTest);
 
 
 trainingTime = toc;
 display(['Time spent training: ' num2str(trainingTime) ' sec'])
 display(['Accuracy: ' num2str(acc)])
-            
+
+
+%%
+accs = [];
+for t = 1:T 
+    accs(t) = accuracy(classifiers(:,1:t), xTest, yTest);
+end
+
+bestAcc = max(accs);
+bestNumberOfClassifiers = find(max(accs)==accs);
+
+figure(4)
+plot(accs);
+xlabel('# of week classifiers', 'FontSize', 16);
+ylabel('Accuracy', 'FontSize', 16);
+
     
         
 
