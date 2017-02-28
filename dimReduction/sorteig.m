@@ -19,7 +19,7 @@ d = flipud(diag(D));	% extract eigenvalues and reverse their order
 [foo, I] = sort(abs(d));
 d = d(I);  		    % sort reversed eigenvalues in ascending order
 B = flipud(d);		% restore sorted eigenvalues into descending order
-for j = 1:length(I)
+for j me= 1:length(I)
   A(:,j) = V(:,I(j));   % sort reversed eigenvectors in ascending order
 end
 A = fliplr(A);		% restore sorted eigenvectors into descending order
