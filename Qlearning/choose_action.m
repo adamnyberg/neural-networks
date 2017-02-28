@@ -1,5 +1,5 @@
 function [ action opt_action] = choose_action( Q,state_x,state_y,...
-    actions,eps,prob_a,prob )
+    actions,prob_a,prob )
 
  %Check the optimal action
     Q_values=Q(state_x,state_y,:);
