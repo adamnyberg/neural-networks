@@ -1,10 +1,11 @@
-world = 1;
+world = 3;
 actions = [1 2 3 4];
 
 % Q-Learning parameters
-alpha = 1; % learning rate. lower if randomness.
-gamma = 0.8; % discount factor. determines the importance of future rewards.
-epsilon = 0.5; % exploration factor. 
+alpha = 0.8; % learning rate. lower if randomness.
+gamma = 0.4; % discount factor. determines the importance of future rewards.
+epsilon = 0.05; % exploration factor.
+epsilon_end = 0.5;
 
 gwinit(world);
 
@@ -18,43 +19,56 @@ Q(:, 1, 4) = -Inf; % left
 
 
 goal_count = 0;
-goal_limit = 100000;
+goal_limit = 10000;
 total_iterations = 0;
 
+epsilon_step = abs(epsilon_end-epsilon)/goal_limit;
+
 %%
+tic
+percent = 0;
 while goal_count < goal_limit
-    x = state.pos(1);
-    y = state.pos(2);
     action = choose_action(Q, state.pos(1), state.pos(2), ...
         actions, [0.25 0.25 0.25 0.25], [1-epsilon epsilon]);
     
     new_state = gwaction(action);
+    reward = new_state.feedback;
+    
+    % protect from unwanted actions
+    true_pos = state.pos + [(action==1) - (action==2),(action==3) - (action==4)]';
+    if (true_pos ~= new_state.pos)
+        state = new_state;
+        continue;
+    end
     
     if (new_state.isvalid == 1)
-        new_value = qfunc(Q, state, new_state, action, alpha, gamma, new_state.feedback);
+        new_value = qfunc(Q, state, new_state, action, alpha, gamma, reward);
         Q(state.pos(1), state.pos(2), action) = new_value; 
         
-        state = new_state;
-    else
-        %new_state
-        %new_state.pos
-        
+        state = new_state;  
     end
     
     if (new_state.isterminal == 1)
         Q(new_state.pos(1), new_state.pos(2), :) = 0;
         gwinit(world);
-        current_iteration = current_iteration + 1;
+        goal_count = goal_count + 1;
+        
+        epsilon = epsilon + epsilon_step;
+        
+        if ((goal_count/goal_limit) > percent)
+            display(num2str(percent*100))
+            percent = percent + 0.01;
+        end
+        
     end
-    goal_count = goal_count + 1;
+    total_iterations = total_iterations + 1;
 end
 
-
+trainingTime = toc;
+display(['Time spent training: ' num2str(trainingTime) ' sec'])
 
 %%
-
 gwdraw();
-
 figure(2);
 subplot(2,2,1)
 imagesc(Q(:, :, 1));
