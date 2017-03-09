@@ -1,4 +1,4 @@
-world = 3;
+world = 1;
 actions = [1 2 3 4];
 
 % Q-Learning parameters
@@ -19,7 +19,7 @@ Q(:, 1, 4) = -Inf; % left
 
 
 goal_count = 0;
-goal_limit = 10000;
+goal_limit = 1000;
 total_iterations = 0;
 
 epsilon_step = abs(epsilon_end-epsilon)/goal_limit;
